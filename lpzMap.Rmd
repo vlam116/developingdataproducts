@@ -1,0 +1,107 @@
+---
+output: html_document
+---
+
+
+
+<center> 
+## Map of the Lincoln Park Zoo
+## June 9, 2020
+### Zoom in and click on the animal markers to learn more about them!
+</center>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, fig.align='center', fig.height=8, fig.width=10}
+library(leaflet)
+lpz_latlong = data.frame(
+  lat = c(41.921083, 41.922293, 41.922469, 41.922844, 41.922680, 41.923008, 41.923399, 41.923423,  
+          41.923726, 41.923965, 41.923271, 41.922381, 41.921387, 41.921511, 
+          41.921363, 41.921275, 41.920621, 41.920732, 41.920764, 41.920182, 41.920832, 
+          41.920261, 41.919922, 41.919679, 41.919687, 41.919455, 41.919156, 41.919052, 
+          41.918785, 41.918812, 41.919032),
+  lng = c(-87.633462, -87.634204, -87.633918, -87.633231, -87.633762, -87.634272, -87.634213, -87.633757,
+          -87.634390, -87.633639, -87.634095, -87.633451, -87.633328, -87.634364, 
+          -87.634965, -87.635404, -87.635323, -87.634406, -87.633901, -87.633735,  
+          -87.632484, -87.632146, -87.632436, -87.632983, -87.632747, -87.632806, -87.632500, -87.632591,
+          -87.632591, -87.632124, -87.632028)
+)
+
+animalIcons <- makeIcon(
+  iconUrl = 
+    c("https://www.lpzoo.org/sites/default/files/b_bb.png",
+      "https://www.lpzoo.org/sites/default/files/rmf.jpg",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_africanwilddog.jpg?itok=kPwQXJRX",       "https://www.lpzoo.org/sites/default/files/styles/medium/public/bhp_sq.jpg?itok=_rReIG_I",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_redriverhog.jpg?itok=d8OfRSQb",          "https://bloximages.chicago2.vip.townnews.com/morningjournal.com/content/tncms/assets/v3/editorial/1/c7/1c7177bf-27b1-5b1f-9f4e-4e972328cc55/5ba19db13d0a7.image.jpg?resize=750%2C649",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_aardvark.jpg?itok=FuX7njJn",
+      "https://www.lpzoo.org/sites/default/files/styles/animal_detail_main_image/public/feature_baringogiraffe.jpg?itok=Fpa5D0er",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_easternblackrhinoceros.jpg?itok=LgNI1W6I",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/sikuthumbfactsheet.jpg?itok=FlkI-rRm",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_klipspringer.jpg?itok=PQOjc24q",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_baldeagle.jpg?itok=-njxxFlX",
+      "https://www.lpzoo.org/sites/default/files/images/multimedia/LPZ160502_263Touched662x993.jpg",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/grayseal_afs_square.jpg?itok=0-4KV7zY",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_asiansmallclawedotter.jpg?itok=9Swy3J7W",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_redwolf.jpg?itok=CrIzbOZP",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_blackbear.jpg?itok=ZvBWpDwe",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/RioFuerteBeadedLizard_FactSheet_square.jpg?itok=qBHOeV72",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_trumpeterswan.jpg?itok=TlRTNIoe",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_chileanflamingo_0.jpg?itok=mKChpVSp",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_piedtamarin.jpg?itok=840VOV-g",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_gorilla.jpg?itok=dZTiXqMm",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_chimpanzee_0.jpg?itok=lmFapm_X",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_sichuantakin.jpg?itok=KALy9qmV",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_grevyszebra.jpg?itok=0hOSPZQx",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_mandarinduck.jpg?itok=OKnIYUd_",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_ostrich.jpg?itok=OA5-dduD",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_patagoniancavy.jpg?itok=19Ij4pj0",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_redkangaroo.jpg?itok=9x9feG0u",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/circle_bactriancamel.jpg?itok=pR20n2yw",
+      "https://www.lpzoo.org/sites/default/files/styles/medium/public/cp_sq.jpg?itok=BXCPiJdY"),
+  iconWidth = 60, iconHeight = 60,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+
+places = c(
+    "<a href='https://www.lpzoo.org/'>Lincoln Park Zoo</a>",
+    "<a href='https://www.lpzoo.org/regenstein-macaque-forest'>Regenstein Macaque Forest</a>",
+    "<a href='https://www.lpzoo.org/animal/african-painted-dog'>African Painted Dog</a>",
+    "<a href='https://www.lpzoo.org/animal/bleeding-heart-pigeon'>Bleeding-Heart Pigeon</a>",
+    "<a href='https://www.lpzoo.org/animal/red-river-hog'>Red River Hog</a>",
+    "<a href='https://www.lpzoo.org/animal/eastern-black-rhinoceros'>Baby Eastern Black Rhino</a>",
+    "<a href='https://www.lpzoo.org/animal/aardvark'>Aardvark</a>",
+    "<a href='https://www.lpzoo.org/animal/giraffe'>Giraffe</a>",
+    "<a href='https://www.lpzoo.org/animal/eastern-black-rhinoceros'>Eastern Black Rhinoceros</a>",
+    "<a href='https://www.lpzoo.org/animal/polar-bear'>Polar Bears</a>",
+    "<a href='https://www.lpzoo.org/animal/klipspringer'>Klipspringer</a>",
+    "<a href='https://www.lpzoo.org/animal/bald-eagle'>Bald Eagle</a>",
+    "<a href='https://www.lpzoo.org/exhibitfactsheet/kovler-lion-house-0'>Kovler Lion House</a>",
+    "<a href='https://www.lpzoo.org/animal/gray-seal'>Gray Seal</a>",
+    "<a href='https://www.lpzoo.org/animal/asian-small-clawed-otter'>Asian Small-Clawed Otter</a>",
+    "<a href='https://www.lpzoo.org/animal/red-wolf'>Red Wolf</a>",
+    "<a href='https://www.lpzoo.org/animal/american-black-bear'>American Black Bear</a>",
+    "<a href='https://www.lpzoo.org/animal/rio-fuerte-beaded-lizard'>Rio Fuerte Beaded Lizard</a>",
+    "<a href='https://www.lpzoo.org/animal/trumpeter-swan'>Trumpeter Swan</a>",
+    "<a href='https://www.lpzoo.org/animal/chilean-flamingo'>Chilean Flamingo</a>",
+    "<a href='https://www.lpzoo.org/animal/pied-tamarin'>Pied Tamarin</a>",
+    "<a href='https://www.lpzoo.org/animal/western-lowland-gorilla'>Western Lowland Gorilla</a>",
+    "<a href='https://www.lpzoo.org/animal/chimpanzee'>Chimpanzee</a>",
+    "<a href='https://www.lpzoo.org/animal/sichuan-takin'>Sichuan Takin</a>",
+    "<a href='https://www.lpzoo.org/animal/grevys-zebra'>Grevy Zebra</a>",
+    "<a href='https://www.lpzoo.org/animal/mandarin-duck'>Mandarin Duck</a>",
+    "<a href='https://www.lpzoo.org/animal/ostrich'>Ostrich</a>",
+    "<a href='https://www.lpzoo.org/animal/patagonian-cavy'>Patagonian Cavy</a>",
+    "<a href='https://www.lpzoo.org/animal/red-kangaroo'>Red Kangaroo</a>",
+    "<a href='https://www.lpzoo.org/animal/bactrian-camel'>Bactrian Camel</a>",
+    "<a href='https://www.lpzoo.org/animal/chacoan-peccary'>Chacoan Peccary</a>")
+
+
+lpz_latlong %>%
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(icon = animalIcons, popup = places)
+
+
+```
