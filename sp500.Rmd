@@ -1,0 +1,43 @@
+---
+title: "Time Series Plot of the S&P 500"
+date: "6/11/2020"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Overview
+
+1. The data used is taken from Yahoo Finance and contains daily information from the S&P 500 for the
+year 2020. 
+2. [Public Stock Data from Yahoo](https://finance.yahoo.com/quote/%5EGSPC/history/)
+3. A time series plot will show the adjusted closing price by day 
+
+## Our Data
+```{r load, echo = FALSE, message = FALSE}
+library(plotly)
+library(ggplot2)
+library(quantmod)
+```
+
+
+```{r sp, echo = FALSE, message = FALSE}
+sp <- getSymbols("^GSPC", src = "yahoo", from = "2020-01-01", to = "2020-06-10", auto.assign = FALSE)
+summary(sp)
+```
+
+## Time Series Plot of S&P 500 Adjusted Closing Prices for the Year 2020
+
+```{r tsplot, fig.align='center'}
+p = ggplot(sp, aes(x = index(sp), y = GSPC.Adjusted)) + 
+    geom_line(color = "darkblue") + 
+    ggtitle("S&P 500 Adj. Closing Prices") + 
+    xlab("Date (2020)") + 
+    ylab("GSPC Price Adjusted") + 
+    theme(plot.title = element_text(hjust = 0.5)) 
+
+ggplotly(p)
+```
+
