@@ -1,7 +1,6 @@
 library(shiny)
 library(tidyverse)
 
-setwd("C:/Users/Lam/Desktop/coursera/Course 9/developingdataproducts/project")
 hp = read.csv("kaggletrain.csv")
 
 hp = hp %>% select(SalePrice, OverallQual, TotRmsAbvGrd, GrLivArea)
