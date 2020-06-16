@@ -1,0 +1,46 @@
+---
+title: "Predicting House Prices"
+date: "6/16/2020"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Overview
+
+This app is designed to predict housing prices using three different linear models in combination with three
+commonly used predictors:
+
+- Overall Quality (categorical ranging from 1-10)
+- Above Ground Living Area (in square feet)
+- Total Rooms Above Ground (not including bathrooms)
+
+## The Data
+
+The housing data used to build the models comes from the famous Ames Housing dataset used in various competitions. 
+
+```{r housing, warning = FALSE, message = FALSE}
+library(tidyverse)
+
+hp = read.csv("kaggletrain.csv")
+hp = hp %>% select(SalePrice, OverallQual, TotRmsAbvGrd, GrLivArea)
+
+summary(hp)
+```
+
+## Model Selection
+
+The app uses three different models for prediction. 
+
+1. Model 1 is a linear model trained on all three predictors.
+2. Model 2 is a linear model trained on GrLivArea and OverallQual.
+3. Model 3 is a linear model trained on TotRmsAbvGrd and GrLivArea.
+
+## App Usage
+
+The app is very simple to use and recalculates predictions very fast due to the simplicity of the models. By adjusting predictor values using the slider widget, new predictions can be generated. 
+
+![](C:/Users/Lam/Desktop/coursera/Course 9/developingdataproducts/project/sample.png)
+
